@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DetailsList, SelectionMode, DefaultButton } from '@fluentui/react';
-import { app, call, mail } from '@microsoft/teams-js'
+import { app, call, mail, teams } from '@microsoft/teams-js'
 import { Button } from "@fluentui/react-components";
 import {
   CallRegular,
@@ -10,6 +10,7 @@ import {
 export const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const teamsinit = false;
 
   useEffect(() => {
     async function fetchSuppliers() {
@@ -20,6 +21,7 @@ export const Suppliers = () => {
       try {
         const searchParams = window.location.href;
         await app.initialize();
+        teamsinit = true;
         const context = await app.getContext();
         if (searchParams.includes('country')) {
           const country = searchParams.match(/=(.*)/)[1];
@@ -87,22 +89,24 @@ export const Suppliers = () => {
 }
 
   const renderContactButton = (item, call, mail) => {
-    if (call.isSupported()) {
-      return (
-        <Button 
-          appearance="transparent"
-          icon={<CallRegular />}
-          onClick={handleCallButtonClick}
-        ></Button>
-      );
-    } else if (mail.isSupported()) {
-      return (
-        <Button
-          appearance="transparent"
-          icon={<CalendarMailRegular />}
-          onClick={handleMailButtonClick}
-        ></Button>
-      );
+    if (teamsinit) {
+      if (call.isSupported()) {
+        return (
+          <Button
+            appearance="transparent"
+            icon={<CallRegular />}
+            onClick={handleCallButtonClick}
+          ></Button>
+        );
+      } else if (mail.isSupported()) {
+        return (
+          <Button
+            appearance="transparent"
+            icon={<CalendarMailRegular />}
+            onClick={handleMailButtonClick}
+          ></Button>
+        );
+      }
     }
   };
 
